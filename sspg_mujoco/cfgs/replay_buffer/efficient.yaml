@@ -1,0 +1,4 @@
+replay_buffer:
+  _target_: buffers.FastReplayBuffer
+  buffer_size: 1000000
+  visual_data: false

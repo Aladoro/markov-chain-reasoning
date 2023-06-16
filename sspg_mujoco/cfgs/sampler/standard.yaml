@@ -1,0 +1,10 @@
+sampler:
+  _target_: samplers.Sampler
+  env:
+    _target_: modular_utils.gym.make
+    id: ${task_name}
+  eval_env:
+    _target_: modular_utils.gym.make
+    id: ${task_name}
+  episode_limit: ${episode_limit}
+  init_random_samples: ${initial_random_samples}

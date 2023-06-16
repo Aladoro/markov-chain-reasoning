@@ -1,0 +1,4 @@
+num_train_frames: 3100000
+stddev_schedule: 'linear(1.0,0.1,500000)'
+per_dim_target_entropy_schedule: 'linear(0.5,-1,500000)'
+num_exploration_steps: 500000

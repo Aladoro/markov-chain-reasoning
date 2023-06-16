@@ -1,0 +1,17 @@
+critics:
+  _target_: efficient_layers.EfficientParallelCritics
+  layers_list:
+    _target_: layers_utils.make_simple_dense_layers
+    num_hidden: 1
+    dims: 256
+    nonlinearity:
+      _target_: layers_utils.tfl.ReLU
+    init:
+      _target_: layers_utils.ParallelOrthogonal
+      gain: 1.414
+    final_init:
+      _target_: layers_utils.ParallelOrthogonal
+      gain: 0.01414
+    out_dim: 1
+    sn_hidden_layers: false
+    parallel_models: 10

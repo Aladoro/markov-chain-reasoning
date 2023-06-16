@@ -1,0 +1,20 @@
+actor:
+  _target_: modular_sac_models.StochasticActor
+  layers_list:
+    _target_: layers_utils.make_actor_layers
+    action_size: ${action_size}
+    output_extra_dims: ${action_size}
+    modern: true
+    num_modern_blocks: 1
+    dims: 256
+    bottleneck_dims: 256
+    init: orthogonal
+    small_final_gain: true
+    layer_norm: true
+    parallel_models:
+  norm_mean:
+  norm_stddev:
+  min_log_stddev: -10
+  max_log_stddev: 2
+  action_scale: ${action_scale}
+  correct_logprob_for_action_scale: false

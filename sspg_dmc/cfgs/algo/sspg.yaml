@@ -1,0 +1,80 @@
+agent_name: sspg
+# task settings
+frame_stack: 3
+action_repeat: 2
+discount: 0.99
+# train settings
+num_seed_frames: 4000
+# replay buffer
+replay_buffer_size: 1000000
+nstep: 3
+batch_size: 256
+# agent
+lr: 1e-4
+feature_dim: 50
+
+shared_steps: 4
+
+agent:
+  _target_: drqsac_fsres_ada.AdaResDrQSACAgent
+  auto_steps: gelman_rubin
+  auto_steps_max: 16
+  auto_steps_threshold: 1.1
+  auto_steps_min_expl_update: mean_floor
+  auto_steps_training_update: mean_ceil
+  auto_steps_target_update: mean_ceil
+  num_chains: 64
+  training_chain_init: 'rb_action' # how to initialize the chain during training
+  target_chain_init: 'rb_action'  # how to initialize the chain during training
+  training_chain_mode: 'all' #'all' # consider last, all, or actions sampled w/ a part. freq for optim
+  target_chain_mode: 'last' # consider last, all, or actions sampled w/ a part. freq for target
+  exploration_chain_mode: 'last' # consider last, all, or actions sampled w/ a part. freq for target
+  training_steps: ${shared_steps}
+  target_steps: ${shared_steps}
+  exploration_steps: ${shared_steps}
+  test_steps: ${shared_steps}
+  training_chain_perturb: false
+  training_chain_perturb_prob: 0.0
+  training_chain_perturb_coeff: 1.0
+  chain_backprop: 2
+  deterministic_test_sampling: true
+  encoder:
+    _target_: drqv2.Encoder
+    obs_shape: ${agent.obs_shape}
+  actor:
+    _target_: drqsac_fsres.ReasoningStochasticActor
+    encoder: ${agent.encoder}
+    action_shape: ${agent.action_shape}
+    feature_dim: ${agent.feature_dim}
+    hidden_dim: ${agent.hidden_dim}
+    min_log_std: -10
+    max_log_std: 2
+  critic:
+    _target_: drqsac.GPCritic
+    num_critics: 2
+    encoder: ${agent.encoder}
+    action_shape: ${agent.action_shape}
+    feature_dim: ${agent.feature_dim}
+    hidden_dim: ${agent.hidden_dim}
+    unc_coeff: 0.75
+  obs_shape: ???
+  action_shape: ???
+  device: ${device}
+  lr: ${lr}
+  critic_target_tau: 0.01
+  update_every_steps: 2
+  use_tb: ${use_tb}
+  num_expl_steps: 2000
+  hidden_dim: 1024
+  feature_dim: ${feature_dim}
+  init_temperature: 0.1
+  target_entropy: linear(0.5,-1,${num_exploration_steps})
+  per_dim_target_entropy: true
+  nstep: ${nstep}
+  discount: ${discount}
+  nstep_entropy_correction: false
+  encoder_lr: ${lr}
+  actor_lr: ${lr}
+  critic_lr: ${lr}
+
+checkpoint_every_frames: 1500000

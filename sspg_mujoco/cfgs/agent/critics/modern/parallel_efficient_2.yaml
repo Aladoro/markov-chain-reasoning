@@ -1,0 +1,12 @@
+critics:
+  _target_: efficient_layers.EfficientParallelCritics
+  layers_list:
+    _target_: layers_utils.make_modern_arch_mod
+    num_modern_blocks: 1
+    dims: 256
+    bottleneck_dims: 256
+    init: orthogonal
+    small_final_gain: true
+    out_dim: 1
+    layer_norm: true
+    parallel_models: 2

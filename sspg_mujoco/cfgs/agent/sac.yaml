@@ -1,0 +1,27 @@
+defaults:
+  - _self_
+  - actor@_global_: stochastic
+  - critics@_global_: modern/parallel_efficient_2
+
+agent_name: sac
+
+agent:
+  _target_: modular_sac_models.SAC
+  actor: ${actor}
+  critics: ${critics}
+  actor_optimizer:
+    _target_: modular_sac_models.tfo.Adam
+    lr: 1e-4
+  critic_optimizer:
+    _target_: modular_sac_models.tfo.Adam
+    lr: 1e-4
+  entropy_optimizer:
+    _target_: modular_sac_models.tfo.Adam
+    lr: 1e-4
+  gamma: 0.99
+  q_polyak: 0.995
+  entropy_coefficient: 1.0
+  tune_entropy_coefficient: true
+  target_entropy: ???
+  clip_actor_gradients: true
+  save_training_statistics: true

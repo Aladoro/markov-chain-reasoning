@@ -1,0 +1,39 @@
+defaults:
+  - _self_
+  - actor@_global_: stochastic
+  - critics@_global_: modern/parallel_efficient_10
+
+# SAC with multiple critics and a generalized penalty to enforce pessimism
+# see https://arxiv.org/abs/2110.03375
+agent_name: gpsac
+
+agent:
+  _target_: modular_generalized_sac_models.GPSAC
+  actor: ${actor}
+  critics: ${critics}
+  actor_optimizer:
+    _target_: modular_sac_models.tfo.Adam
+    lr: 3e-4
+  critic_optimizer:
+    _target_: modular_sac_models.tfo.Adam
+    lr: 3e-4
+  entropy_optimizer:
+    _target_: modular_sac_models.tfo.Adam
+    lr: 3e-4
+  gamma: 0.99
+  q_polyak: 0.995
+  entropy_coefficient: 1.0
+  tune_entropy_coefficient: true
+  target_entropy: ???
+  clip_actor_gradients: true
+  save_training_statistics: true
+
+steps_per_epoch: 1000
+initial_random_samples: 5000
+start_training: 5000
+training_catchup: false
+buffer_size: 1000000
+batch_size: 256
+updates_per_step: 20
+actor_delay: 20
+target_delay: 1

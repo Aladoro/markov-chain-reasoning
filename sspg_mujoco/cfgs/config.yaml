@@ -1,0 +1,39 @@
+defaults:
+  - _self_
+  - agent@_global_: sspg
+  - replay_buffer@_global_: efficient
+  - sampler@_global_: standard
+
+
+# task params
+
+task_name: 'Humanoid-v2'
+seed: 1
+episode_limit: 1000
+
+# training params
+epochs: 200
+test_runs_per_epoch: 3
+steps_per_epoch: 10000
+initial_random_samples: 5000
+start_training: 5000
+training_catchup: False
+
+buffer_size: 1000000
+batch_size: 128
+updates_per_step: 1
+actor_delay: ${updates_per_step}
+target_delay: 1
+save_training_statistics: true
+
+gpu: 0
+memory_limit: 4000
+action_size: ???
+action_scale: ???
+logging_folder: exp_local
+
+save_weights_every: 200
+
+hydra:
+  run:
+    dir: ./${logging_folder}/${agent_name}/${task_name}/${now:%Y.%m.%d}_${now:%H%M%S}_s${seed}

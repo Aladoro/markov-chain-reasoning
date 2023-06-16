@@ -1,0 +1,70 @@
+defaults:
+  - _self_
+  - actor@_global_: res/stochastic_modern
+  - critics@_global_: modern/parallel_efficient_10
+
+agent_name: sspg
+
+shared_steps: 4
+auto_target_update: mean_ceil
+agent:
+  _target_: fsres_ada_sac_models.AdaResSAC
+  auto_steps: gelman_rubin
+  auto_steps_max: 16
+  auto_steps_threshold: 1.1
+  auto_steps_min_expl_update: mean_floor
+  auto_steps_training_update: ${auto_target_update}
+  auto_steps_target_update: ${auto_target_update}
+  num_chains: 64
+  training_chain_init: 'target_chain_action' # how to initialize the chain during training
+  target_chain_init: 'rb_action'  # how to initialize the chain during training, 'rb_action' = stored replay buffer action
+  training_chain_mode: 'all' # consider 'last' or 'all' actions sampled in the RMC for training
+  target_chain_mode: 'last' # consider 'last' or 'all' actions sampled in the RMC for computing the TD-targets
+  exploration_chain_mode: 'last' # consider 'last' or 'all' actions sampled in the RMC for exploring
+  training_steps: ${shared_steps}
+  target_steps: ${shared_steps}
+  exploration_steps: ${shared_steps}
+  test_steps: ${shared_steps}
+  training_unbiased_logprobs: false
+  target_unbiased_logprobs: false
+  training_chain_backpropagation: 2
+  training_chain_perturb: false
+  training_chain_perturb_prob: 0.0
+  training_chain_perturb_coeff: 1.0
+  training_policy_with_next_state: false
+  deterministic_test_sampling: false
+  # GPSAC cfgs
+  actor: ${actor}
+  critics: ${critics}
+  actor_optimizer:
+    _target_: modular_sac_models.tfo.Adam
+    lr: 3e-4
+  critic_optimizer:
+    _target_: modular_sac_models.tfo.Adam
+    lr: 3e-4
+  entropy_optimizer:
+    _target_: modular_sac_models.tfo.Adam
+    lr: 3e-4
+  gamma: 0.99
+  q_polyak: 0.995
+  entropy_coefficient: 1.0
+  tune_entropy_coefficient: true
+  target_entropy: ???
+  clip_actor_gradients: true
+  uncertainty_coeff: 0.75
+  tune_uncertainty_coefficient: false
+  tune_uncertainty_coefficient_delay: 20
+  save_training_statistics: true
+
+  save_detailed_fs_statistics: false
+  save_mh_statistics: false
+
+steps_per_epoch: 1000
+initial_random_samples: 5000
+start_training: 5000
+training_catchup: false
+buffer_size: 1000000
+batch_size: 256
+updates_per_step: 20
+actor_delay: ${updates_per_step}
+target_delay: 1
