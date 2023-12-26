@@ -13,6 +13,7 @@ def huber_quantile_loss(errors, quantiles, kappa):
     return tf.abs(quantiles - quantile_indicator)*huber_diffs
 
 class GPSAC(SAC):
+    '''SAC implementation with generalized pessimism from https://arxiv.org/abs/2110.03375'''
     def __init__(self,
                  actor,
                  critics,
@@ -275,35 +276,6 @@ class GPSAC(SAC):
         q_unc = tf.reshape(q_unc, [-1, 1, 1])  # n x 1 x 1
         return q_pred, q_unc
 
-    def check_gradients(self, grads, weights, obs, name, inf_ele, sampled_act, **log_kwargs):
-        '''Debug function.'''
-        none_grads = [tf.reduce_any(tf.math.is_nan(grad)) for grad in grads]
-        stacked_none = tf.stack(none_grads, axis=0)
-        if tf.reduce_any(stacked_none):
-            tf.print(name)
-            tf.print('------- KWARGS -------')
-            for n, v in log_kwargs.items():
-                tf.print('------- {} -------'.format(n))
-                tf.print(v)
-
-            tf.print('------- None grads -------')
-            for i, ng in enumerate(none_grads):
-                if ng:
-                    tf.print(i)
-                    tf.print(weights[i].name)
-
-            inf_coords = tf.argmin(tf.cast(tf.math.is_finite(inf_ele), tf.float32))
-            inf = tf.reduce_min(tf.cast(tf.math.is_finite(inf_ele), tf.float32))
-            tf.print('------- INF? -------')
-            tf.print(inf)
-            tf.print('------- MEAN STD -------')
-            mean, stddev = self._act.call_verbose(obs)
-            tf.print('------- MEAN -------')
-            tf.print(tf.gather(mean, inf_coords, axis=0), summarize=-1)
-            tf.print('------- std -------')
-            tf.print(tf.gather(stddev, inf_coords, axis=0), summarize=-1)
-            tf.print('------- ACT -------')
-            tf.print(tf.gather(sampled_act, inf_coords, axis=0), summarize=-1)
 
     def make_critics_train_op(self, discount):
         if self._critics_type == 'det':
@@ -327,13 +299,7 @@ class GPSAC(SAC):
                     loss = q_loss
                 gradients = tape.gradient(loss, self.get_critics_trainable_weights())
                 if self._debug_invalid_grads:
-                    self.check_gradients(grads=gradients, weights=self.get_critics_trainable_weights(),
-                                         obs=next_observation_batch, sampled_act=next_actions,
-                                         name='Q-LOSS', inf_ele=next_log_probs,
-                                         tmean_QS=tf.reduce_mean(critic_qs),
-                                         tar_q_pred=tf.reduce_mean(penalized_q_pred),
-                                         mean_targets=tf.reduce_mean(targets), q_loss=q_loss,
-                                         mean_log_probs=tf.reduce_mean(next_log_probs), alpha=tf.exp(self._log_alpha))
+                    pass
                 self.critic_opt.apply_gradients(zip(gradients, self.get_critics_trainable_weights()))
                 if self._tune_uncertainty_coeff and tune_uncertainty:
                     self.step_uncertainty_coeff(errors, next_q_uncertainty)
@@ -395,11 +361,7 @@ class GPSAC(SAC):
             if self._clip_actor_gradients:
                 gradients, _ = tf.clip_by_global_norm(gradients, 40)
             if self._debug_invalid_grads:
-                self.check_gradients(grads=gradients, weights=self.get_actor_trainable_weights(),
-                                     obs=observation_batch,
-                                     name='ACT-LOSS', inf_ele=log_probs[:, 0], sampled_act=actions,
-                                     mean_OBJ=actor_loss, mean_log_probs=tf.reduce_mean(log_probs),
-                                     alpha=tf.exp(self._log_alpha))
+                pass
             self.actor_opt.apply_gradients(zip(gradients, self.get_actor_trainable_weights()))
             alpha_loss = step_alpha(log_probs=log_probs)
             return actor_loss, alpha_loss

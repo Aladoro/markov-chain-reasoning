@@ -16,7 +16,7 @@ feature_dim: 50
 shared_steps: 4
 
 agent:
-  _target_: drqsac_fsres_ada.AdaResDrQSACAgent
+  _target_: drqsac_fsres_ada.SSPG
   auto_steps: gelman_rubin
   auto_steps_max: 16
   auto_steps_threshold: 1.1

@@ -1,15 +1,12 @@
 # SSPG for Mujoco
 
-Minimal repository.
-A complete, documented version of our implementation will be open-sourced after review.
+Minimal implementation of SSPG for proprioceptive control on OpenAI Gym Mujoco environments.
 
 ## Requirements
 
-1) To replicate the experiments in this project you need to install the Mujoco
-simulation software with a valid license. You can find instructions [here](https://github.com/openai/mujoco-py).
+Install [MuJoCo](http://www.mujoco.org/)
 
-2) The rest of the requirements can be installed with [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html),
-by utilizing the provided environment file:
+Install dependencies via [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html):
 
 ```setup
 conda env create -f env.yml

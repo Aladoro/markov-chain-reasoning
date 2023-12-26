@@ -295,7 +295,7 @@ class ReasoningStochasticActorCopy(ReasoningStochasticActor):
         for a_w, s_w in zip(actor_weights, self_weights):
             s_w.assign(a_w)
 
-class ResSAC(GPSAC):
+class SSPGFixedSteps(GPSAC):
     def __init__(self, num_chains,
                  training_chain_init,
                  target_chain_init,
@@ -558,7 +558,7 @@ class ResSAC(GPSAC):
         return out
 
     def reset_loss_metrics(self, ):
-        super(ResSAC, self).reset_loss_metrics()
+        super(SSPGFixedSteps, self).reset_loss_metrics()
         for tr_stat in self._training_steps_statistics.values():
             tr_stat.reset_states()
         for raw_stat in self._scalar_statistics.values():
@@ -566,7 +566,7 @@ class ResSAC(GPSAC):
         pass
 
     def make_latest_log_dict(self, ):
-        super(ResSAC, self).make_latest_log_dict()
+        super(SSPGFixedSteps, self).make_latest_log_dict()
         for tr_stat_name, tr_stat in self._training_steps_statistics.items():
             tr_stat_res = tr_stat.result().numpy()
             for i in range(self.training_steps):

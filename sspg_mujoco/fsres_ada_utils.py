@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 import tensorflow_probability as tfp
-from fsres_sac_models import ResSAC
+from fsres_sac_models import SSPGFixedSteps
 
 from modular_sac_models import StochasticActor
 

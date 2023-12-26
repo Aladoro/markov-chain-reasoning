@@ -2,13 +2,13 @@ import numpy as np
 import torch
 
 import utils
-from drqsac_fsres import ResDrQSACAgent
+from drqsac_fsres import SSPGFixedSteps
 from fsres_ada_utils import StepsUpdater
 U_ENT = np.log(2)
 LN4 = np.log(4)
 
 
-class AdaResDrQSACAgent(ResDrQSACAgent):
+class SSPG(SSPGFixedSteps):
     def __init__(self,
                  auto_steps,
                  auto_steps_max,
@@ -25,7 +25,7 @@ class AdaResDrQSACAgent(ResDrQSACAgent):
         self.auto_steps_training_update = auto_steps_training_update
         self.auto_steps_target_update = auto_steps_target_update
         self.auto_steps_min_expl_update = auto_steps_min_expl_update
-        super(AdaResDrQSACAgent, self).__init__(*args, **kwargs)
+        super(SSPG, self).__init__(*args, **kwargs)
 
         self.steps_updater = StepsUpdater(init=self.training_steps, decay=0.99)
 

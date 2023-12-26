@@ -11,8 +11,6 @@ from omegaconf import OmegaConf
 from torch import distributions as pyd
 from torch.distributions.utils import _standard_normal
 
-# from drqv2 import Actor
-
 class eval_mode:
     def __init__(self, *models):
         self.models = models

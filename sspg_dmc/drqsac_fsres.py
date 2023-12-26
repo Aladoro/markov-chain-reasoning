@@ -12,45 +12,6 @@ from drqsac import StochasticActor, DrQSACAgent, ParallelEncoder
 U_ENT = np.log(2)
 LN4 = np.log(4)
 
-def debug_execute(module, inputs):
-    h = inputs
-    for subm in module.children():
-        o = subm(h)
-        if torch.isnan(o).any():
-            print('NAN IN TRUNK')
-            print(subm)
-            print('OUT_L')
-            print(o)
-            print('INP_L')
-            print(h)
-            print('OUT L VAR')
-            print(o.var(-1))
-            print('IN L VAR')
-            print(h.var(-1))
-            print('MOD_IN VAR')
-            print(inputs.var(-1))
-            if isinstance(subm, nn.Linear):
-                print('LIN WEIGHT')
-                print(subm.weight)
-        if torch.isinf(o).any():
-            print('INF IN TRUNK')
-            print(subm)
-            print('OUT_L')
-            print(o)
-            print('INP_L')
-            print(h)
-            print('OUT L VAR')
-            print(o.var(-1))
-            print('IN L VAR')
-            print(h.var(-1))
-            print('MOD_IN VAR')
-            print(inputs.var(-1))
-            if isinstance(subm, nn.Linear):
-                print('LIN WEIGHT')
-                print(subm.weight)
-        h = o
-    return h
-
 class ReasoningStochasticActor(StochasticActor):
     def __init__(self, encoder, action_shape, feature_dim, hidden_dim, min_log_std, max_log_std, residual=False):
         super().__init__(encoder, action_shape, feature_dim, hidden_dim, min_log_std, max_log_std)
@@ -204,7 +165,7 @@ class ReasoningStochasticActor(StochasticActor):
         return all_actions, log_probs # batch_dims x chain_length x (action_dims, 1)
 
 
-class ResDrQSACAgent(DrQSACAgent):
+class SSPGFixedSteps(DrQSACAgent):
     def __init__(self,
                  num_chains,
                  training_chain_init,
@@ -225,7 +186,7 @@ class ResDrQSACAgent(DrQSACAgent):
                  chain_backprop=False,
                  **kwargs):
 
-        super(ResDrQSACAgent, self).__init__(*args, **kwargs)
+        super(SSPGFixedSteps, self).__init__(*args, **kwargs)
         assert isinstance(self.actor, ReasoningStochasticActor)
         assert training_chain_init in ['rb_action']
         assert target_chain_init in ['rb_action']

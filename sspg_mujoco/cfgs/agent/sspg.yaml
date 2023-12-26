@@ -8,7 +8,7 @@ agent_name: sspg
 shared_steps: 4
 auto_target_update: mean_ceil
 agent:
-  _target_: fsres_ada_sac_models.AdaResSAC
+  _target_: fsres_ada_sac_models.SSPG
   auto_steps: gelman_rubin
   auto_steps_max: 16
   auto_steps_threshold: 1.1

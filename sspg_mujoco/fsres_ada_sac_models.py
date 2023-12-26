@@ -3,7 +3,7 @@ import tensorflow as tf
 import tensorflow_probability as tfp
 
 from fsres_ada_utils import StepsUpdater
-from fsres_sac_models import ResSAC
+from fsres_sac_models import SSPGFixedSteps
 
 from modular_sac_models import StochasticActor
 
@@ -15,7 +15,7 @@ tfb = tfp.bijectors
 LN4 = np.log(4)
 
 
-class AdaResSAC(ResSAC):
+class SSPG(SSPGFixedSteps):
     def __init__(self,
                  auto_steps,
                  auto_steps_max,
@@ -33,7 +33,7 @@ class AdaResSAC(ResSAC):
         self.auto_steps_training_update = auto_steps_training_update
         self.auto_steps_target_update = auto_steps_target_update
         self.auto_steps_min_expl_update = auto_steps_min_expl_update
-        ResSAC.__init__(self, *args, **kwargs)
+        SSPGFixedSteps.__init__(self, *args, **kwargs)
 
         # Variables for dynamic_action_unroll
         self.action_dim = self._act._action_dim
@@ -49,7 +49,7 @@ class AdaResSAC(ResSAC):
         self.current_target_steps = tf.Variable(self.target_steps, dtype=tf.int32, trainable=False)
 
     def define_training_statistics(self, ):
-        super(AdaResSAC, self).define_training_statistics()
+        super(SSPG, self).define_training_statistics()
         if self._save_training_statistics:
             self._scalar_statistics['auto_exploration_steps'] = tf.keras.metrics.Mean('aexs')
             self._scalar_statistics['auto_exploration_final_conv'] = tf.keras.metrics.Mean('aefc')

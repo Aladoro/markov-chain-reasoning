@@ -1,3 +1,5 @@
+# Implementation based on https://github.com/toshas/torch_truncnorm
+
 import math
 from numbers import Number
 

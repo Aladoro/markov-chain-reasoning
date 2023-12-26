@@ -1,14 +1,13 @@
-
-
 # SSPG for DMC
 
-Minimal repository.
-A complete, documented version of our implementation will be open-sourced after review.
+Minimal implementation of SSPG for pixel-based control on the DeepMind Control suite.
+
 ## Instructions
 
 Install [MuJoCo](http://www.mujoco.org/)
 
-Install dependencies:
+Install dependencies via [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html):
+
 ```sh
 conda env create -f env.yml
 conda activate sspg_dmc
@@ -27,3 +26,7 @@ python train.py algo=sspg task=quadruped_run
 Mujoco and DeepMind Control are licensed under the Apache License, Version 2.0.
 
 _DrQv2_ is licensed under the MIT License.
+
+## Acknowledgements
+
+We would like to thank Denis Yarats for open-sourcing the [DrQv2 codebase](https://github.com/facebookresearch/drqv2). Our implementation builds on top of their repository.
