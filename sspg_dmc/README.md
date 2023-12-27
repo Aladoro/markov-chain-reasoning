@@ -4,7 +4,7 @@ Minimal implementation of SSPG for pixel-based control on the DeepMind Control s
 
 ## Instructions
 
-Install [MuJoCo](http://www.mujoco.org/)
+Install [MuJoCo version 2.0](https://www.roboti.us/download.html). For further details about requirements and common issues with this step, see detailed instructions at the  [mujoco-py page](https://github.com/openai/mujoco-py/tree/0711ab58777a28aff847adbf05ba246a337908a0).
 
 Install dependencies via [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html):
 
@@ -17,7 +17,7 @@ conda activate sspg_dmc
 
 You can run experiments by executing _train.py_ and override the appropriate arguments (see [hydra](https://hydra.cc/docs/intro/) for details), e.g. to run SSPG on _quadruped\_run_:
 
-```setup
+```sh
 python train.py algo=sspg task=quadruped_run
 ```
 
